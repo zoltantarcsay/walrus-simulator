@@ -178,7 +178,7 @@ class Player {
     for (pew in _pews) {
       pew.draw()
     }
-    Canvas.print(_text, 1, 1, Color.white)
+    Canvas.print(_text, 1, 1, Color.black)
   }
   
 }
@@ -267,17 +267,33 @@ class Game {
 
   }
 
+  static drawBg() {
+    var bg = ImageData.loadFromFile("images/bg.png")
+    var size = 64
+    var h = 0
+    
+    while (h < CANVAS_HEIGHT) {
+      var w = 0
+      while (w < CANVAS_WIDTH) {
+        bg.draw(w, h)
+        w = w + size
+      }
+      h = h + size
+    }
+  }
+
   static draw(alpha) {
     Canvas.cls()
 
     if (!__started) {
       Canvas.print("WALRUS SIMULATOR", 135, 150, Color.white)
       Canvas.print("> Press Enter to play <", 105, 170, Color.rgb(155, 155, 155))
-      return
     } else if (__gameOver) {
+      Canvas.rectfill(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, Color.black)
       Canvas.print("GAME OVER!", 155, 150, Color.white)
       Canvas.print("> Press Enter to play again <", 80, 170, Color.rgb(155, 155, 155))
     } else {
+      drawBg()
       __player.draw()
       for (enemy in __enemies) {
         enemy.draw()
