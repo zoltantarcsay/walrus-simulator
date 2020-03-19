@@ -6,7 +6,7 @@ import "random" for Random
 var CANVAS_WIDTH = 400
 var CANVAS_HEIGHT = 300
 var MIN_ENEMIES = 4
-var MAX_ENEMIES = 8
+var MAX_ENEMIES = 12
 var RANDOM = Random.new()
 var MESSAGES = [
   "Feel my wrath!",
@@ -17,6 +17,25 @@ var MESSAGES = [
   "Cry havoc and let slip the dogs of war!",
   "Why did you delete the authenticator app?!?!"
 ]
+
+class Sfx {
+  static init() {
+    __sounds = {}
+  }
+
+  static load(group, count) {
+    __sounds[group] = count
+    
+    for (i in 1..count) {
+      var id = "%(group)%(i)"
+      AudioEngine.load(id, "sounds/%(id).ogg")
+    }
+  }
+
+  static playRandom(group) {
+    AudioEngine.play("%(group)%(RANDOM.int(1, __sounds[group] + 1))")
+  }
+}
 
 class Pew {
   construct init(x, y) {
@@ -116,7 +135,7 @@ class Enemy {
 
   kill() {
     if (!_dying) {
-      AudioEngine.play("ow")
+      Sfx.playRandom("ow")
       _dying = true
     }
   }
@@ -170,7 +189,7 @@ class Player {
     var pew = Pew.init(_x, _y + 20)
     _pews.add(pew)
     _text = MESSAGES[RANDOM.int(MESSAGES.count)]
-    AudioEngine.play("grunt")
+      Sfx.playRandom("grunt")
   }
 
   draw() {
@@ -185,13 +204,13 @@ class Player {
 
 class Game {
   static init() {
-    AudioEngine.load("grunt", "sounds/grunt.ogg")
-    AudioEngine.load("ow", "sounds/ow.ogg")
     AudioEngine.load("theme", "music/theme.ogg")
     AudioEngine.load("gameover", "music/gameover.ogg")
-    for (i in 1..9) {
-      AudioEngine.load("iforgot%(i)", "sounds/iforgot%(i).ogg")
-    }
+    
+    Sfx.init()
+    Sfx.load("grunt", 4)
+    Sfx.load("iforgot", 9)
+    Sfx.load("ow", 10)
     
     Canvas.resize(CANVAS_WIDTH, CANVAS_HEIGHT)
 
@@ -226,7 +245,7 @@ class Game {
     if (!__gameOver) {
       if (__sfxDelay == 0) {
         __sfxDelay = 300 + RANDOM.int(30)
-        AudioEngine.play("iforgot%(RANDOM.int(1, 10))")
+        Sfx.playRandom("iforgot")
       } else {
         __sfxDelay = __sfxDelay - 1
       }
