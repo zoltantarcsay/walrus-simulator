@@ -211,7 +211,7 @@ class Game {
     __gameOver = false
 
     for (i in 1..RANDOM.int(MIN_ENEMIES, MAX_ENEMIES)) {
-      __enemies.add(Enemy.init(RANDOM.int(CANVAS_WIDTH)))
+      __enemies.add(Enemy.init(RANDOM.int(CANVAS_WIDTH - 32)))
     }
 
     __sfxDelay = 0
